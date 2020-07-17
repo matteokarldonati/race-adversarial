@@ -25,7 +25,6 @@ from enum import Enum
 from typing import List, Optional
 
 import tqdm
-from filelock import FileLock
 from transformers import PreTrainedTokenizer, is_tf_available, is_torch_available
 
 from utils import replace_names
@@ -75,7 +74,6 @@ class Split(Enum):
 
 
 if is_torch_available():
-    import torch
     from torch.utils.data.dataset import Dataset
 
 
@@ -98,32 +96,19 @@ if is_torch_available():
         ):
             processor = processors[task]()
 
-            cached_features_file = os.path.join(
-                data_dir,
-                "cached_{}_{}_{}_{}".format(mode.value, tokenizer.__class__.__name__, str(max_seq_length), task, ),
-            )
+            logger.info(f"Creating features from dataset file at {data_dir}")
 
-            # Make sure only the first process in distributed training processes the dataset,
-            # and the others will use the cache.
-            lock_path = cached_features_file + ".lock"
-            with FileLock(lock_path):
+            label_list = processor.get_labels()
 
-                if os.path.exists(cached_features_file) and not overwrite_cache:
-                    logger.info(f"Loading features from cached file {cached_features_file}")
-                    self.features = torch.load(cached_features_file)
-                else:
-                    logger.info(f"Creating features from dataset file at {data_dir}")
-                    label_list = processor.get_labels()
-                    if mode == Split.dev:
-                        examples = processor.get_dev_examples(data_dir)
-                    elif mode == Split.test:
-                        examples = processor.get_test_examples(data_dir)
-                    else:
-                        examples = processor.get_train_examples(data_dir)
-                    logger.info("Training examples: %s", len(examples))
-                    self.features = convert_examples_to_features(examples, label_list, max_seq_length, tokenizer, )
-                    logger.info("Saving features into cached file %s", cached_features_file)
-                    torch.save(self.features, cached_features_file)
+            if mode == Split.dev:
+                examples = processor.get_dev_examples(data_dir)
+            elif mode == Split.test:
+                examples = processor.get_test_examples(data_dir)
+            else:
+                examples = processor.get_train_examples(data_dir)
+
+            logger.info("Training examples: %s", len(examples))
+            self.features = convert_examples_to_features(examples, label_list, max_seq_length, tokenizer, )
 
         def __len__(self):
             return len(self.features)
