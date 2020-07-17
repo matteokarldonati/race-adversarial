@@ -27,6 +27,9 @@ def get_names(text):
 def replace_names(text):
     names = get_names(text)
 
+    if not names:
+        return text
+
     for name in names:
         adv_name = random.choice(MALE_NAMES)
         adv_text = text.replace(name, adv_name)
