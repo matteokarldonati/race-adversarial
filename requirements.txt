@@ -1,0 +1,12 @@
+torch==1.4.0
+numpy
+
+transformers
+
+spacy
+nltk
+
+tqdm
+requests
+boto3
+
