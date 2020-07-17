@@ -21,6 +21,7 @@ from dataclasses import dataclass, field
 from typing import Dict, Optional
 
 import numpy as np
+import torch
 from transformers import (
     AutoConfig,
     AutoModelForMultipleChoice,
@@ -79,12 +80,13 @@ class DataTrainingArguments:
         default=False, metadata={"help": "Overwrite the cached training and evaluation sets"}
     )
 
+@dataclass
+class TrainingArguments(TrainingArguments):
+    n_runs: int = field(
+        default=1, metadata={"help": "Number of runs"}
+    )
 
 def main():
-    # See all possible arguments in src/transformers/training_args.py
-    # or by passing the --help flag to this script.
-    # We now keep distinct sets of args, for a cleaner separation of concerns.
-
     parser = HfArgumentParser((ModelArguments, DataTrainingArguments, TrainingArguments))
     model_args, data_args, training_args = parser.parse_args_into_dataclasses()
 
@@ -124,11 +126,6 @@ def main():
     except KeyError:
         raise ValueError("Task not found: %s" % (data_args.task_name))
 
-    # Load pretrained model and tokenizer
-    #
-    # Distributed training:
-    # The .from_pretrained methods guarantee that only one local process can concurrently
-    # download model & vocab.
 
     config = AutoConfig.from_pretrained(
         model_args.config_name if model_args.config_name else model_args.model_name_or_path,
@@ -147,33 +144,44 @@ def main():
         cache_dir=model_args.cache_dir,
     )
 
-    # Get dataset
-    test_dataset = MultipleChoiceDataset(
-        data_dir=data_args.data_dir,
-        tokenizer=tokenizer,
-        task=data_args.task_name,
-        max_seq_length=data_args.max_seq_length,
-        overwrite_cache=data_args.overwrite_cache,
-        mode=Split.test,
-    )
+    runs = []
 
-    def compute_metrics(p: EvalPrediction) -> Dict:
-        preds = np.argmax(p.predictions, axis=1)
-        return {"acc": simple_accuracy(preds, p.label_ids)}
+    for i in range(training_args.n_runs):
 
-    # Initialize our Trainer
-    trainer = Trainer(
-        model=model,
-        args=training_args,
-        compute_metrics=compute_metrics,
-    )
+        logger.info("Starting run number" + str(i))
 
-    predictions, label_ids, metrics = trainer.predict(test_dataset)
+        test_dataset = MultipleChoiceDataset(
+            data_dir=data_args.data_dir,
+            tokenizer=tokenizer,
+            task=data_args.task_name,
+            max_seq_length=data_args.max_seq_length,
+            overwrite_cache=data_args.overwrite_cache,
+            mode=Split.test,
+        )
 
-    if trainer.is_world_master():
-        logger.info("***** Test results *****")
-        for key, value in metrics.items():
-            logger.info("  %s = %s", key, value)
+        def compute_metrics(p: EvalPrediction) -> Dict:
+            preds = np.argmax(p.predictions, axis=1)
+            return {"acc": simple_accuracy(preds, p.label_ids)}
+
+        trainer = Trainer(
+            model=model,
+            args=training_args,
+            compute_metrics=compute_metrics,
+        )
+
+        predictions, label_ids, metrics = trainer.predict(test_dataset)
+        predictions_file = os.path.join(training_args.output_dir, "test_predictions" + '-' + str(i))
+        torch.save(predictions, predictions_file)
+
+        if trainer.is_world_master():
+            logger.info("***** Test results *****")
+            for key, value in metrics.items():
+                logger.info("  %s = %s", key, value)
+
+        runs.append(metrics['eval_acc'])
+
+    runs_file = os.path.join(training_args.output_dir, 'runs')
+    torch.save(torch.tensor(runs), runs_file)
 
     return metrics
 
