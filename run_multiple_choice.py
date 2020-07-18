@@ -163,7 +163,7 @@ def main():
             max_seq_length=data_args.max_seq_length,
             overwrite_cache=data_args.overwrite_cache,
             mode=Split.test,
-            female_names=female_names,
+            female_names=data_args.female_names,
         )
 
         def compute_metrics(p: EvalPrediction) -> Dict:
