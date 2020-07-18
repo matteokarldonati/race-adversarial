@@ -149,6 +149,7 @@ def main():
     runs = []
 
     for i in range(training_args.n_runs):
+        set_seed(i)
 
         logger.info("Starting run number " + str(i))
 
