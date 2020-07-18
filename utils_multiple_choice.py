@@ -93,6 +93,7 @@ if is_torch_available():
                 max_seq_length: Optional[int] = None,
                 overwrite_cache=False,
                 mode: Split = Split.train,
+                female_names=False
         ):
             processor = processors[task]()
 
@@ -103,7 +104,7 @@ if is_torch_available():
             if mode == Split.dev:
                 examples = processor.get_dev_examples(data_dir)
             elif mode == Split.test:
-                examples = processor.get_test_examples(data_dir)
+                examples = processor.get_test_examples(data_dir, female_names)
             else:
                 examples = processor.get_train_examples(data_dir)
 
@@ -239,14 +240,14 @@ class RaceProcessor(DataProcessor):
         middle = self._read_txt(middle)
         return self._create_examples(high + middle, "dev")
 
-    def get_test_examples(self, data_dir):
+    def get_test_examples(self, data_dir, female_names):
         """See base class."""
         logger.info("LOOKING AT {} test".format(data_dir))
         high = os.path.join(data_dir, "test/high")
         middle = os.path.join(data_dir, "test/middle")
         high = self._read_txt(high)
         middle = self._read_txt(middle)
-        return self._create_examples(high + middle, "test")
+        return self._create_examples(high + middle, "test", female_names)
 
     def get_labels(self):
         """See base class."""
@@ -262,17 +263,17 @@ class RaceProcessor(DataProcessor):
                 lines.append(data_raw)
         return lines
 
-    def _create_examples(self, lines, set_type):
+    def _create_examples(self, lines, set_type, female_names):
         """Creates examples for the training and dev sets."""
         examples = []
         for (_, data_raw) in enumerate(lines):
             race_id = "%s-%s" % (set_type, data_raw["race_id"])
-            article = replace_names(data_raw["article"])
+            article = replace_names(data_raw["article"], female_names)
 
             for i in range(len(data_raw["answers"])):
                 truth = str(ord(data_raw["answers"][i]) - ord("A"))
-                question = replace_names(data_raw["questions"][i])
-                options = [replace_names(option) for option in data_raw["options"][i]]
+                question = replace_names(data_raw["questions"][i], female_names)
+                options = [replace_names(option, female_names) for option in data_raw["options"][i]]
 
                 examples.append(
                     InputExample(
