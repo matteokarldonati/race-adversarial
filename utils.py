@@ -54,7 +54,8 @@ def replace_names(text, female_names):
         else:
             adv_name = random.choice(MALE_NAMES)
 
-        for _ in name:
-            adv_text = text.replace(name, adv_name)
+        for i in name:
+            adv_text = text.replace(i, adv_name)
+            text = adv_text
 
     return adv_text
