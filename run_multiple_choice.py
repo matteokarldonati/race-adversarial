@@ -32,6 +32,7 @@ from transformers import (
     TrainingArguments,
     set_seed,
 )
+
 from utils_multiple_choice import MultipleChoiceDataset, Split, processors
 
 logger = logging.getLogger(__name__)
@@ -80,11 +81,13 @@ class DataTrainingArguments:
         default=False, metadata={"help": "Overwrite the cached training and evaluation sets"}
     )
 
+
 @dataclass
 class TrainingArguments(TrainingArguments):
     n_runs: int = field(
         default=1, metadata={"help": "Number of runs"}
     )
+
 
 def main():
     parser = HfArgumentParser((ModelArguments, DataTrainingArguments, TrainingArguments))
@@ -126,7 +129,6 @@ def main():
     except KeyError:
         raise ValueError("Task not found: %s" % (data_args.task_name))
 
-
     config = AutoConfig.from_pretrained(
         model_args.config_name if model_args.config_name else model_args.model_name_or_path,
         num_labels=num_labels,
@@ -148,7 +150,7 @@ def main():
 
     for i in range(training_args.n_runs):
 
-        logger.info("Starting run number" + str(i))
+        logger.info("Starting run number " + str(i))
 
         test_dataset = MultipleChoiceDataset(
             data_dir=data_args.data_dir,
@@ -171,7 +173,16 @@ def main():
 
         predictions, label_ids, metrics = trainer.predict(test_dataset)
         predictions_file = os.path.join(training_args.output_dir, "test_predictions" + '-' + str(i))
+        labels_ids_file = os.path.join(training_args.output_dir, "test_labels_id" + '-' + str(i))
         torch.save(predictions, predictions_file)
+        torch.save(label_ids, labels_ids_file)
+
+        examples_ids = []
+        for input_feature in test_dataset.features:
+            examples_ids.append(input_feature.example_id)
+
+        examples_ids_file = os.path.join(training_args.output_dir, "examples_ids" + '-' + str(i))
+        torch.save(examples_ids, examples_ids_file)
 
         if trainer.is_world_master():
             logger.info("***** Test results *****")
@@ -183,7 +194,7 @@ def main():
     runs_file = os.path.join(training_args.output_dir, 'runs')
     torch.save(torch.tensor(runs), runs_file)
 
-    return metrics
+    return runs
 
 
 def _mp_fn(index):
