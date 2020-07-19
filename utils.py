@@ -37,25 +37,27 @@ def get_names(text):
         if x.label_ == 'PERSON':
             names.append(x.text)
 
-    names = list(set(names))
-
+    names = group_names(list(set(names)))
     return names
 
 
-def replace_names(text, female_names):
-    names = group_names(get_names(text))
+def get_adv_names(names_num, female_names):
+    adv_names = []
+    for _ in range(names_num):
+        if female_names:
+            adv_names.append(random.choice(FEMALE_NAMES))
+        else:
+            adv_names.append(random.choice(MALE_NAMES))
+    return adv_names
 
+
+def replace_names(text, names, adv_names):
     if not names:
         return text
 
-    for name in names:
-        if female_names:
-            adv_name = random.choice(FEMALE_NAMES)
-        else:
-            adv_name = random.choice(MALE_NAMES)
-
-        for i in name:
-            adv_text = text.replace(i, adv_name)
+    for i, name_group in enumerate(names):
+        for name in name_group:
+            adv_text = text.replace(name, adv_names[i])
             text = adv_text
 
     return adv_text
