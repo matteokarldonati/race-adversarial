@@ -80,8 +80,8 @@ class DataTrainingArguments:
     overwrite_cache: bool = field(
         default=False, metadata={"help": "Overwrite the cached training and evaluation sets"}
     )
-    female_names: bool = field(
-        default=False, metadata={"help": "replace all name entities with female names"}
+    name_gender_or_race: str = field(
+        default=None, metadata={"help": "choices=['male', 'female']"}
     )
 
 
@@ -163,7 +163,7 @@ def main():
             max_seq_length=data_args.max_seq_length,
             overwrite_cache=data_args.overwrite_cache,
             mode=Split.test,
-            female_names=data_args.female_names,
+            name_gender_or_race=data_args.name_gender_or_race,
         )
 
         def compute_metrics(p: EvalPrediction) -> Dict:

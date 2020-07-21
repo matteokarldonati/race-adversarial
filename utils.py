@@ -12,6 +12,8 @@ nltk.download('names')
 MALE_NAMES = names.words('male.txt')
 FEMALE_NAMES = names.words('female.txt')
 
+NAMES = MALE_NAMES + FEMALE_NAMES
+
 
 def group_names(names):
     result = []
@@ -41,13 +43,15 @@ def get_names(text):
     return names
 
 
-def get_adv_names(names_num, female_names):
+def get_adv_names(names_num, name_gender_or_race):
     adv_names = []
     for _ in range(names_num):
-        if female_names:
+        if name_gender_or_race == 'males':
+            adv_names.append(random.choice(MALE_NAMES))
+        elif name_gender_or_race == 'female':
             adv_names.append(random.choice(FEMALE_NAMES))
         else:
-            adv_names.append(random.choice(MALE_NAMES))
+            adv_names.append(random.choice(NAMES))
     return adv_names
 
 
