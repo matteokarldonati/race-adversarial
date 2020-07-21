@@ -81,7 +81,7 @@ class DataTrainingArguments:
         default=False, metadata={"help": "Overwrite the cached training and evaluation sets"}
     )
     name_gender_or_race: str = field(
-        default=None, metadata={"help": "choices=['male', 'female']"}
+        default=None, metadata={"help": "choices=['male', 'female', 'african', 'chinese']"}
     )
 
 

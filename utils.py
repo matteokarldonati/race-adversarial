@@ -1,9 +1,10 @@
 import random
 from difflib import SequenceMatcher
 
+import neuralcoref
 import nltk
 import spacy
-import neuralcoref
+import torch
 from nltk.corpus import names
 
 nlp = spacy.load("en_core_web_sm")
@@ -13,6 +14,8 @@ nltk.download('names')
 
 MALE_NAMES = names.words('male.txt')
 FEMALE_NAMES = names.words('female.txt')
+AFRICAN_NAMES = torch.load('data/african_names')
+CHINESE_NAMES = torch.load('data/chinese_names')
 
 NAMES = MALE_NAMES + FEMALE_NAMES
 
@@ -76,6 +79,10 @@ def get_adv_names(names_num, name_gender_or_race):
             adv_names.append(random.choice(MALE_NAMES))
         elif name_gender_or_race == 'female':
             adv_names.append(random.choice(FEMALE_NAMES))
+        elif name_gender_or_race == 'african':
+            adv_names.append(random.choice(AFRICAN_NAMES))
+        elif name_gender_or_race == 'chinese':
+            adv_names.append(random.choice(CHINESE_NAMES))
         else:
             adv_names.append(random.choice(NAMES))
     return adv_names
