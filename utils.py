@@ -43,6 +43,30 @@ def get_names(text):
     return names
 
 
+def get_names_(text):
+    doc = nlp(text)
+    names = []
+    for x in doc.ents:
+        if x.label_ == 'PERSON':
+            names.append(x.text)
+
+    names = list(set(names))
+    return names
+
+
+def get_names_groups(text):
+    doc = nlp(text)
+    clusters = doc._.coref_clusters
+    groups = []
+    if clusters:
+        for cluster in clusters:
+            name_group = get_names_(' '.join(list(set([str(i) for i in cluster.mentions]))))
+            if name_group:
+                groups.append(name_group)
+
+    return groups
+
+
 def get_adv_names(names_num, name_gender_or_race):
     adv_names = []
     for _ in range(names_num):
