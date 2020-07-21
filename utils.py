@@ -3,9 +3,11 @@ from difflib import SequenceMatcher
 
 import nltk
 import spacy
+import neuralcoref
 from nltk.corpus import names
 
 nlp = spacy.load("en_core_web_sm")
+neuralcoref.add_to_pipe(nlp)
 
 nltk.download('names')
 
