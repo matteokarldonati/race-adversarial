@@ -14,8 +14,8 @@ nltk.download('names')
 
 MALE_NAMES = names.words('male.txt')
 FEMALE_NAMES = names.words('female.txt')
-AFRICAN_NAMES = torch.load('data/african_names')
-CHINESE_NAMES = torch.load('data/chinese_names')
+AFRICAN_NAMES = torch.load('./data/african_names')
+CHINESE_NAMES = torch.load('./data/chinese_names')
 
 NAMES = MALE_NAMES + FEMALE_NAMES
 
