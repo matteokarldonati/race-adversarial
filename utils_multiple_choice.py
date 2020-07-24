@@ -27,7 +27,7 @@ from typing import List, Optional
 import tqdm
 from transformers import PreTrainedTokenizer, is_tf_available, is_torch_available
 
-from utils import get_names, get_adv_names, replace_names, get_names_, get_names_groups
+from utils import get_names, get_adv_names, replace_names, get_names_, get_names_groups, get_names_groups_
 
 logger = logging.getLogger(__name__)
 
@@ -268,7 +268,7 @@ class RaceProcessor(DataProcessor):
         examples = []
         for (_, data_raw) in enumerate(lines):
             race_id = "%s-%s" % (set_type, data_raw["race_id"])
-            names = get_names_groups(data_raw["article"])
+            names = get_names_groups_(data_raw["article"])
             adv_names = get_adv_names(len(names), name_gender_or_race)
             article = replace_names(data_raw["article"], names, adv_names)
 

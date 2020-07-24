@@ -72,6 +72,29 @@ def get_names_groups(text):
     return groups
 
 
+def get_names_groups_(text):
+    doc = nlp(text)
+    clusters = doc._.coref_clusters
+    groups = []
+    if clusters:
+        for cluster in clusters:
+            name_group = get_names_('. '.join(list(set([str(i) for i in cluster.mentions]))))
+
+            flag = True
+            for name in name_group:
+                for group in groups:
+                    if name in group:
+                        flag = False
+                    elif name in ' '.join(group):
+                        group.append(name)
+                        flag = False
+
+            if name_group and flag:
+                groups.append(name_group)
+
+    return groups
+
+
 def get_adv_names(names_num, name_gender_or_race):
     adv_names = []
     for _ in range(names_num):
