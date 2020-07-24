@@ -93,7 +93,9 @@ if is_torch_available():
                 max_seq_length: Optional[int] = None,
                 overwrite_cache=False,
                 mode: Split = Split.train,
-                name_gender_or_race=False
+                name_gender_or_race=False,
+                augment=False,
+                perturbation_num=0
         ):
             processor = processors[task]()
 
@@ -106,7 +108,7 @@ if is_torch_available():
             elif mode == Split.test:
                 examples = processor.get_test_examples(data_dir, name_gender_or_race)
             else:
-                examples = processor.get_train_examples(data_dir)
+                examples = processor.get_train_examples(data_dir, name_gender_or_race, augment, perturbation_num)
 
             logger.info("Training examples: %s", len(examples))
             self.features = convert_examples_to_features(examples, label_list, max_seq_length, tokenizer, )
@@ -222,23 +224,23 @@ class DataProcessor:
 class RaceProcessor(DataProcessor):
     """Processor for the RACE data set."""
 
-    def get_train_examples(self, data_dir):
+    def get_train_examples(self, data_dir, name_gender_or_race, augment, perturbation_num):
         """See base class."""
         logger.info("LOOKING AT {} train".format(data_dir))
         high = os.path.join(data_dir, "train/high")
         middle = os.path.join(data_dir, "train/middle")
         high = self._read_txt(high)
         middle = self._read_txt(middle)
-        return self._create_examples(high + middle, "train")
+        return self._create_examples(high + middle, "train", name_gender_or_race, augment, perturbation_num)
 
-    def get_dev_examples(self, data_dir):
+    def get_dev_examples(self, data_dir, name_gender_or_race):
         """See base class."""
         logger.info("LOOKING AT {} dev".format(data_dir))
         high = os.path.join(data_dir, "dev/high")
         middle = os.path.join(data_dir, "dev/middle")
         high = self._read_txt(high)
         middle = self._read_txt(middle)
-        return self._create_examples(high + middle, "dev")
+        return self._create_examples(high + middle, "dev", name_gender_or_race)
 
     def get_test_examples(self, data_dir, name_gender_or_race):
         """See base class."""
@@ -247,7 +249,7 @@ class RaceProcessor(DataProcessor):
         middle = os.path.join(data_dir, "test/middle")
         high = self._read_txt(high)
         middle = self._read_txt(middle)
-        return self._create_examples(high + middle, "test", name_gender_or_race)
+        return self._create_examples(high + middle, "test", name_gender_or_race, augment=False, perturbation_num=1)
 
     def get_labels(self):
         """See base class."""
@@ -263,29 +265,49 @@ class RaceProcessor(DataProcessor):
                 lines.append(data_raw)
         return lines
 
-    def _create_examples(self, lines, set_type, name_gender_or_race):
+    def _create_examples(self, lines, set_type, name_gender_or_race, augment, perturbation_num):
         """Creates examples for the training and dev sets."""
         examples = []
         for (_, data_raw) in enumerate(lines):
             race_id = "%s-%s" % (set_type, data_raw["race_id"])
-            names = get_names_groups_(data_raw["article"])
-            adv_names = get_adv_names(len(names), name_gender_or_race)
-            article = replace_names(data_raw["article"], names, adv_names)
+            article = data_raw["article"]
+            names = get_names_groups_(article)
 
-            for i in range(len(data_raw["answers"])):
-                truth = str(ord(data_raw["answers"][i]) - ord("A"))
-                question = replace_names(data_raw["questions"][i], names, adv_names)
-                options = [replace_names(option, names, adv_names) for option in data_raw["options"][i]]
+            for i in range(perturbation_num):
+                adv_names = get_adv_names(len(names), name_gender_or_race)
+                article_adv = replace_names(data_raw["article"], names, adv_names)
 
-                examples.append(
-                    InputExample(
-                        example_id=race_id,
-                        question=question,
-                        contexts=[article, article, article, article],  # this is not efficient but convenient
-                        endings=[options[0], options[1], options[2], options[3]],
-                        label=truth,
+                for i in range(len(data_raw["answers"])):
+                    truth = str(ord(data_raw["answers"][i]) - ord("A"))
+                    question_adv = replace_names(data_raw["questions"][i], names, adv_names)
+                    options_adv = [replace_names(option, names, adv_names) for option in data_raw["options"][i]]
+
+                    if perturbation_num == 0:
+                        examples.append(
+                            InputExample(
+                                example_id=race_id,
+                                question=question_adv,
+                                contexts=[article_adv, article_adv, article_adv, article_adv],
+                                endings=[options_adv[0], options_adv[1], options_adv[2], options_adv[3]],
+                                label=truth,
+                            )
+                        )
+
+            if augment:
+                for i in range(len(data_raw["answers"])):
+                    truth = str(ord(data_raw["answers"][i]) - ord("A"))
+                    question = data_raw["questions"][i]
+                    options = data_raw["options"][i]
+
+                    examples.append(
+                        InputExample(
+                            example_id=race_id,
+                            question=question,
+                            contexts=[article, article, article, article],
+                            endings=[options[0], options[1], options[2], options[3]],
+                            label=truth,
+                        )
                     )
-                )
         return examples
 
 

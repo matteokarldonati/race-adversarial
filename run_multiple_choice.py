@@ -83,6 +83,16 @@ class DataTrainingArguments:
     name_gender_or_race: str = field(
         default=None, metadata={"help": "choices=['male', 'female', 'african', 'chinese']"}
     )
+    augment: bool = field(
+        default=False, metadata={"help": "Perform data augmentation on the training set"}
+    )
+    perturbation_num: int = field(
+        default=0, metadata={"help": "How many perturbation to perform per example"}
+    )
+    compute_features: bool = field(
+        default=False, metadata={"help": "Compute and return training features"}
+    )
+
 
 
 @dataclass
@@ -149,6 +159,48 @@ def main():
         cache_dir=model_args.cache_dir,
     )
 
+    train_dataset = (
+        MultipleChoiceDataset(
+            data_dir=data_args.data_dir,
+            tokenizer=tokenizer,
+            task=data_args.task_name,
+            max_seq_length=data_args.max_seq_length,
+            overwrite_cache=data_args.overwrite_cache,
+            mode=Split.train,
+            name_gender_or_race=data_args.name_gender_or_race,
+            augment=data_args.augment,
+            perturbation_num=data_args.perturbation_num,
+        )
+        if training_args.do_train
+        else None
+    )
+
+    if data_args.compute_features:
+        features_file = os.path.join(training_args.output_dir, "features")
+        torch.save(train_dataset.features, features_file)
+        return train_dataset.features
+
+    def compute_metrics(p: EvalPrediction) -> Dict:
+        preds = np.argmax(p.predictions, axis=1)
+        return {"acc": simple_accuracy(preds, p.label_ids)}
+
+    trainer = Trainer(
+        model=model,
+        args=training_args,
+        train_dataset=train_dataset,
+        compute_metrics=compute_metrics,
+    )
+
+    # Training
+    if training_args.do_train:
+        trainer.train(
+            model_path=model_args.model_name_or_path if os.path.isdir(model_args.model_name_or_path) else None
+        )
+        trainer.save_model()
+
+        if trainer.is_world_master():
+            tokenizer.save_pretrained(training_args.output_dir)
+
     runs = []
 
     for i in range(training_args.n_runs):
@@ -164,16 +216,6 @@ def main():
             overwrite_cache=data_args.overwrite_cache,
             mode=Split.test,
             name_gender_or_race=data_args.name_gender_or_race,
-        )
-
-        def compute_metrics(p: EvalPrediction) -> Dict:
-            preds = np.argmax(p.predictions, axis=1)
-            return {"acc": simple_accuracy(preds, p.label_ids)}
-
-        trainer = Trainer(
-            model=model,
-            args=training_args,
-            compute_metrics=compute_metrics,
         )
 
         predictions, label_ids, metrics = trainer.predict(test_dataset)
