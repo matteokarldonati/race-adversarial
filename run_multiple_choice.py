@@ -159,21 +159,17 @@ def main():
         cache_dir=model_args.cache_dir,
     )
 
-    train_dataset = (
-        MultipleChoiceDataset(
-            data_dir=data_args.data_dir,
-            tokenizer=tokenizer,
-            task=data_args.task_name,
-            max_seq_length=data_args.max_seq_length,
-            overwrite_cache=data_args.overwrite_cache,
-            mode=Split.train,
-            name_gender_or_race=data_args.name_gender_or_race,
-            augment=data_args.augment,
-            perturbation_num=data_args.perturbation_num,
-        )
-        if training_args.do_train
-        else None
-    )
+    train_dataset = MultipleChoiceDataset(
+                        data_dir=data_args.data_dir,
+                        tokenizer=tokenizer,
+                        task=data_args.task_name,
+                        max_seq_length=data_args.max_seq_length,
+                        overwrite_cache=data_args.overwrite_cache,
+                        mode=Split.train,
+                        name_gender_or_race=data_args.name_gender_or_race,
+                        augment=data_args.augment,
+                        perturbation_num=data_args.perturbation_num,
+                    )
 
     if data_args.compute_features:
         features_file = os.path.join(training_args.output_dir, "features")
