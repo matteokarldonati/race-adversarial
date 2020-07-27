@@ -268,7 +268,7 @@ class RaceProcessor(DataProcessor):
     def _create_examples(self, lines, set_type, name_gender_or_race, augment, perturbation_num):
         """Creates examples for the training and dev sets."""
         examples = []
-        for (_, data_raw) in enumerate(lines):
+        for (_, data_raw) in tqdm.tqdm(enumerate(lines), desc="create examples"):
             race_id = "%s-%s" % (set_type, data_raw["race_id"])
             article = data_raw["article"]
             names = get_names_groups_(article)
