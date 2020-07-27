@@ -25,6 +25,7 @@ from enum import Enum
 from typing import List, Optional
 
 import tqdm
+import torch
 from transformers import PreTrainedTokenizer, is_tf_available, is_torch_available
 
 from utils import get_names, get_adv_names, replace_names, get_names_, get_names_groups, get_names_groups_
@@ -112,6 +113,10 @@ if is_torch_available():
 
             logger.info("Training examples: %s", len(examples))
             self.features = convert_examples_to_features(examples, label_list, max_seq_length, tokenizer, )
+
+            logger.info("Saving Features")
+            features_file = os.path.join(data_dir, "augmented_features")
+            torch.save(self.features, features_file)
 
         def __len__(self):
             return len(self.features)
