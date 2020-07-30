@@ -282,10 +282,6 @@ class RaceProcessor(DataProcessor):
             article = data_raw["article"]
             names = get_names_groups_(article)
 
-            if add_distractor:
-                distractor = random.choice(data_raw["options"])
-                article += f" The distractor is '{distractor}'"
-
             for _ in range(perturbation_num):
                 adv_names = get_adv_names(len(names), name_gender_or_race)
                 article_adv = replace_names(article, names, adv_names)
@@ -307,6 +303,9 @@ class RaceProcessor(DataProcessor):
 
             if (perturbation_num == 0) or augment:
                 for i in range(len(data_raw["answers"])):
+                    if add_distractor:
+                        distractor = data_raw["article"] + random.choice(data_raw["options"][i])
+                        article = f" The distractor is '{distractor}'"
                     truth = str(ord(data_raw["answers"][i]) - ord("A"))
                     question = data_raw["questions"][i]
                     options = data_raw["options"][i]
