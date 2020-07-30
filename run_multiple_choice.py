@@ -89,10 +89,9 @@ class DataTrainingArguments:
     perturbation_num: int = field(
         default=0, metadata={"help": "How many perturbation to perform per example"}
     )
-    compute_features: bool = field(
-        default=False, metadata={"help": "Compute and return training features"}
+    add_distractor: bool = field(
+        default=False, metadata={"help": "add distractor at the end of the article"}
     )
-
 
 
 @dataclass
@@ -159,7 +158,8 @@ def main():
         cache_dir=model_args.cache_dir,
     )
 
-    train_dataset = MultipleChoiceDataset(
+    train_dataset = (
+        MultipleChoiceDataset(
                         data_dir=data_args.data_dir,
                         tokenizer=tokenizer,
                         task=data_args.task_name,
@@ -169,12 +169,10 @@ def main():
                         name_gender_or_race=data_args.name_gender_or_race,
                         augment=data_args.augment,
                         perturbation_num=data_args.perturbation_num,
-                    )
-
-    if data_args.compute_features:
-        features_file = os.path.join(training_args.output_dir, "features")
-        torch.save(train_dataset.features, features_file)
-        return train_dataset.features
+        )
+        if training_args.do_train
+        else None
+    )
 
     def compute_metrics(p: EvalPrediction) -> Dict:
         preds = np.argmax(p.predictions, axis=1)
@@ -212,6 +210,7 @@ def main():
             overwrite_cache=data_args.overwrite_cache,
             mode=Split.test,
             name_gender_or_race=data_args.name_gender_or_race,
+            add_distractor=data_args.add_distractor
         )
 
         predictions, label_ids, metrics = trainer.predict(test_dataset)

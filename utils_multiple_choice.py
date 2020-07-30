@@ -20,15 +20,15 @@ import glob
 import json
 import logging
 import os
+import random
 from dataclasses import dataclass
 from enum import Enum
 from typing import List, Optional
 
 import tqdm
-import torch
 from transformers import PreTrainedTokenizer, is_tf_available, is_torch_available
 
-from utils import get_names, get_adv_names, replace_names, get_names_, get_names_groups, get_names_groups_
+from utils import get_adv_names, replace_names, get_names_groups_
 
 logger = logging.getLogger(__name__)
 
@@ -96,7 +96,8 @@ if is_torch_available():
                 mode: Split = Split.train,
                 name_gender_or_race=False,
                 augment=False,
-                perturbation_num=0
+                perturbation_num=0,
+                add_distractor=False
         ):
             processor = processors[task]()
 
@@ -107,16 +108,13 @@ if is_torch_available():
             if mode == Split.dev:
                 examples = processor.get_dev_examples(data_dir)
             elif mode == Split.test:
-                examples = processor.get_test_examples(data_dir, name_gender_or_race)
+                examples = processor.get_test_examples(data_dir, name_gender_or_race,
+                                                                    add_distractor=add_distractor)
             else:
                 examples = processor.get_train_examples(data_dir, name_gender_or_race, augment, perturbation_num)
 
             logger.info("Training examples: %s", len(examples))
             self.features = convert_examples_to_features(examples, label_list, max_seq_length, tokenizer, )
-
-            logger.info("Saving Features")
-            features_file = os.path.join(data_dir, "augmented_features")
-            torch.save(self.features, features_file)
 
         def __len__(self):
             return len(self.features)
@@ -247,14 +245,15 @@ class RaceProcessor(DataProcessor):
         middle = self._read_txt(middle)
         return self._create_examples(high + middle, "dev", name_gender_or_race)
 
-    def get_test_examples(self, data_dir, name_gender_or_race):
+    def get_test_examples(self, data_dir, name_gender_or_race, add_distractor):
         """See base class."""
         logger.info("LOOKING AT {} test".format(data_dir))
         high = os.path.join(data_dir, "test/high")
         middle = os.path.join(data_dir, "test/middle")
         high = self._read_txt(high)
         middle = self._read_txt(middle)
-        return self._create_examples(high + middle, "test", name_gender_or_race, augment=False, perturbation_num=1)
+        return self._create_examples(high + middle, "test", name_gender_or_race, augment=False, perturbation_num=0,
+                                     add_distractor=add_distractor)
 
     def get_labels(self):
         """See base class."""
@@ -270,7 +269,8 @@ class RaceProcessor(DataProcessor):
                 lines.append(data_raw)
         return lines
 
-    def _create_examples(self, lines, set_type, name_gender_or_race, augment, perturbation_num):
+    def _create_examples(self, lines, set_type, name_gender_or_race=None, augment=False, perturbation_num=0,
+                         add_distractor=False):
         """Creates examples for the training and dev sets."""
         examples = []
         for (_, data_raw) in tqdm.tqdm(enumerate(lines), desc="create examples"):
@@ -278,27 +278,30 @@ class RaceProcessor(DataProcessor):
             article = data_raw["article"]
             names = get_names_groups_(article)
 
-            for i in range(perturbation_num):
+            if add_distractor:
+                distractor = random.choice(data_raw["options"])
+                article += f" The distractor is '{distractor}'"
+
+            for _ in range(perturbation_num):
                 adv_names = get_adv_names(len(names), name_gender_or_race)
-                article_adv = replace_names(data_raw["article"], names, adv_names)
+                article_adv = replace_names(article, names, adv_names)
 
                 for i in range(len(data_raw["answers"])):
                     truth = str(ord(data_raw["answers"][i]) - ord("A"))
                     question_adv = replace_names(data_raw["questions"][i], names, adv_names)
                     options_adv = [replace_names(option, names, adv_names) for option in data_raw["options"][i]]
 
-                    if perturbation_num == 0:
-                        examples.append(
-                            InputExample(
-                                example_id=race_id,
-                                question=question_adv,
-                                contexts=[article_adv, article_adv, article_adv, article_adv],
-                                endings=[options_adv[0], options_adv[1], options_adv[2], options_adv[3]],
-                                label=truth,
-                            )
+                    examples.append(
+                        InputExample(
+                            example_id=race_id,
+                            question=question_adv,
+                            contexts=[article_adv, article_adv, article_adv, article_adv],
+                            endings=[options_adv[0], options_adv[1], options_adv[2], options_adv[3]],
+                            label=truth,
                         )
+                    )
 
-            if augment:
+            if (perturbation_num == 0) or augment:
                 for i in range(len(data_raw["answers"])):
                     truth = str(ord(data_raw["answers"][i]) - ord("A"))
                     question = data_raw["questions"][i]
