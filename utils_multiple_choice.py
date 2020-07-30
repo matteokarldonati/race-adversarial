@@ -305,7 +305,7 @@ class RaceProcessor(DataProcessor):
                 for i in range(len(data_raw["answers"])):
                     if add_distractor:
                         distractor = random.choice(data_raw["options"][i])
-                        article = f" The distractor is '{distractor}'." + data_raw["article"]
+                        article = f" The distractor is '{distractor}'. " + data_raw["article"]
                     truth = str(ord(data_raw["answers"][i]) - ord("A"))
                     question = data_raw["questions"][i]
                     options = data_raw["options"][i]
