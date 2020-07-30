@@ -114,6 +114,10 @@ if is_torch_available():
                 examples = processor.get_train_examples(data_dir, name_gender_or_race, augment, perturbation_num)
 
             logger.info("Training examples: %s", len(examples))
+            logger.info("article", examples.article)
+            logger.info("question", examples.question)
+            logger.info("options", examples.endings)
+
             self.features = convert_examples_to_features(examples, label_list, max_seq_length, tokenizer, )
 
         def __len__(self):
