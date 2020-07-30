@@ -114,7 +114,7 @@ if is_torch_available():
                 examples = processor.get_train_examples(data_dir, name_gender_or_race, augment, perturbation_num)
 
             logger.info("Training examples: %s", len(examples))
-            logger.info("article", examples.article)
+            logger.info("article", examples.contexts[0])
             logger.info("question", examples.question)
             logger.info("options", examples.endings)
 
