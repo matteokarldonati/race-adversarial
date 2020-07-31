@@ -328,7 +328,7 @@ class RaceProcessor(DataProcessor):
 
                     if perturbation_type == 'distractor':
                         distractor = random.choice(data_raw["options"][i])
-                        article = data_raw["article"] + f" The distractor is '{distractor}'."
+                        article = f"The distractor is '{distractor}'. " + data_raw["article"]
 
                         question = data_raw["questions"][i]
                         options = data_raw["options"][i]
