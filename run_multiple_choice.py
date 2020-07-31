@@ -80,17 +80,20 @@ class DataTrainingArguments:
     overwrite_cache: bool = field(
         default=False, metadata={"help": "Overwrite the cached training and evaluation sets"}
     )
-    name_gender_or_race: str = field(
-        default=None, metadata={"help": "choices=['male', 'female', 'african', 'chinese']"}
+    perturbation_type: str = field(
+        default=None, metadata={"help": "choices=['names', 'distractor']"}
+    )
+    perturbation_num_train: int = field(
+        default=0, metadata={"help": "How many perturbation to perform per example on the training set"}
+    )
+    perturbation_num_test: int = field(
+        default=0, metadata={"help": "How many perturbation to perform per example on the test set"}
     )
     augment: bool = field(
         default=False, metadata={"help": "Perform data augmentation on the training set"}
     )
-    perturbation_num: int = field(
-        default=0, metadata={"help": "How many perturbation to perform per example"}
-    )
-    add_distractor: bool = field(
-        default=False, metadata={"help": "add distractor at the end of the article"}
+    name_gender_or_race: str = field(
+        default=None, metadata={"help": "choices=['male', 'female'], only if perturbation_type='names'"}
     )
 
 
@@ -166,9 +169,10 @@ def main():
                         max_seq_length=data_args.max_seq_length,
                         overwrite_cache=data_args.overwrite_cache,
                         mode=Split.train,
-                        name_gender_or_race=data_args.name_gender_or_race,
+                        perturbation_type=data_args.perturbation_type,
+                        perturbation_num=data_args.perturbation_num_train,
                         augment=data_args.augment,
-                        perturbation_num=data_args.perturbation_num,
+                        name_gender_or_race=data_args.name_gender_or_race,
         )
         if training_args.do_train
         else None
@@ -209,8 +213,9 @@ def main():
             max_seq_length=data_args.max_seq_length,
             overwrite_cache=data_args.overwrite_cache,
             mode=Split.test,
+            perturbation_type=data_args.perturbation_type,
+            perturbation_num=data_args.perturbation_num_test,
             name_gender_or_race=data_args.name_gender_or_race,
-            add_distractor=data_args.add_distractor
         )
 
         predictions, label_ids, metrics = trainer.predict(test_dataset)
