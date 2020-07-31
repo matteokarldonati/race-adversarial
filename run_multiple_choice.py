@@ -97,13 +97,6 @@ class DataTrainingArguments:
     )
 
 
-@dataclass
-class TrainingArguments(TrainingArguments):
-    n_runs: int = field(
-        default=1, metadata={"help": "Number of runs"}
-    )
-
-
 def main():
     parser = HfArgumentParser((ModelArguments, DataTrainingArguments, TrainingArguments))
     model_args, data_args, training_args = parser.parse_args_into_dataclasses()
@@ -163,16 +156,16 @@ def main():
 
     train_dataset = (
         MultipleChoiceDataset(
-                        data_dir=data_args.data_dir,
-                        tokenizer=tokenizer,
-                        task=data_args.task_name,
-                        max_seq_length=data_args.max_seq_length,
-                        overwrite_cache=data_args.overwrite_cache,
-                        mode=Split.train,
-                        perturbation_type=data_args.perturbation_type,
-                        perturbation_num=data_args.perturbation_num_train,
-                        augment=data_args.augment,
-                        name_gender_or_race=data_args.name_gender_or_race,
+            data_dir=data_args.data_dir,
+            tokenizer=tokenizer,
+            task=data_args.task_name,
+            max_seq_length=data_args.max_seq_length,
+            overwrite_cache=data_args.overwrite_cache,
+            mode=Split.train,
+            perturbation_type=data_args.perturbation_type,
+            perturbation_num=data_args.perturbation_num_train,
+            augment=data_args.augment,
+            name_gender_or_race=data_args.name_gender_or_race,
         )
         if training_args.do_train
         else None
@@ -199,49 +192,38 @@ def main():
         if trainer.is_world_master():
             tokenizer.save_pretrained(training_args.output_dir)
 
-    runs = []
+    # Test
+    test_dataset = MultipleChoiceDataset(
+        data_dir=data_args.data_dir,
+        tokenizer=tokenizer,
+        task=data_args.task_name,
+        max_seq_length=data_args.max_seq_length,
+        overwrite_cache=data_args.overwrite_cache,
+        mode=Split.test,
+        perturbation_type=data_args.perturbation_type,
+        perturbation_num=data_args.perturbation_num_test,
+        name_gender_or_race=data_args.name_gender_or_race,
+    )
 
-    for i in range(training_args.n_runs):
-        set_seed(i)
+    predictions, label_ids, metrics = trainer.predict(test_dataset)
 
-        logger.info("Starting run number " + str(i))
+    predictions_file = os.path.join(training_args.output_dir, "test_predictions")
+    labels_ids_file = os.path.join(training_args.output_dir, "test_labels_id")
+    torch.save(predictions, predictions_file)
+    torch.save(label_ids, labels_ids_file)
 
-        test_dataset = MultipleChoiceDataset(
-            data_dir=data_args.data_dir,
-            tokenizer=tokenizer,
-            task=data_args.task_name,
-            max_seq_length=data_args.max_seq_length,
-            overwrite_cache=data_args.overwrite_cache,
-            mode=Split.test,
-            perturbation_type=data_args.perturbation_type,
-            perturbation_num=data_args.perturbation_num_test,
-            name_gender_or_race=data_args.name_gender_or_race,
-        )
+    examples_ids = []
+    for input_feature in test_dataset.features:
+        examples_ids.append(input_feature.example_id)
+    examples_ids_file = os.path.join(training_args.output_dir, "examples_ids")
+    torch.save(examples_ids, examples_ids_file)
 
-        predictions, label_ids, metrics = trainer.predict(test_dataset)
-        predictions_file = os.path.join(training_args.output_dir, "test_predictions" + '-' + str(i))
-        labels_ids_file = os.path.join(training_args.output_dir, "test_labels_id" + '-' + str(i))
-        torch.save(predictions, predictions_file)
-        torch.save(label_ids, labels_ids_file)
+    if trainer.is_world_master():
+        logger.info("***** Test results *****")
+        for key, value in metrics.items():
+            logger.info("  %s = %s", key, value)
 
-        examples_ids = []
-        for input_feature in test_dataset.features:
-            examples_ids.append(input_feature.example_id)
-
-        examples_ids_file = os.path.join(training_args.output_dir, "examples_ids" + '-' + str(i))
-        torch.save(examples_ids, examples_ids_file)
-
-        if trainer.is_world_master():
-            logger.info("***** Test results *****")
-            for key, value in metrics.items():
-                logger.info("  %s = %s", key, value)
-
-        runs.append(metrics['eval_acc'])
-
-    runs_file = os.path.join(training_args.output_dir, 'runs')
-    torch.save(torch.tensor(runs), runs_file)
-
-    return runs
+    return metrics
 
 
 def _mp_fn(index):
