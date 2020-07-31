@@ -114,9 +114,7 @@ if is_torch_available():
                 examples = processor.get_train_examples(data_dir, name_gender_or_race, augment, perturbation_num)
 
             logger.info("Training examples: %s", len(examples))
-            logger.info("article", examples[0].contexts[0])
-            logger.info("question", examples[0].question)
-            logger.info("options", examples[0].endings)
+            logger.info("article", str(examples[0].contexts[0]))
 
             self.features = convert_examples_to_features(examples, label_list, max_seq_length, tokenizer, )
 
@@ -305,7 +303,7 @@ class RaceProcessor(DataProcessor):
                 for i in range(len(data_raw["answers"])):
                     if add_distractor:
                         distractor = random.choice(data_raw["options"][i])
-                        article = f" The distractor is '{distractor}'. " + data_raw["article"]
+                        article = data_raw["article"] + f" The distractor is '{distractor}'."
                     truth = str(ord(data_raw["answers"][i]) - ord("A"))
                     question = data_raw["questions"][i]
                     options = data_raw["options"][i]
