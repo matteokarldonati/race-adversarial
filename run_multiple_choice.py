@@ -218,11 +218,14 @@ def main():
     examples_ids_file = os.path.join(training_args.output_dir, "examples_ids")
     torch.save(examples_ids, examples_ids_file)
 
-    if trainer.is_world_master():
-        logger.info("***** Test results *****")
-        for key, value in metrics.items():
-            logger.info("  %s = %s", key, value)
+    output_eval_file = os.path.join(training_args.output_dir, "test_results.txt")
 
+    if trainer.is_world_master():
+        with open(output_eval_file, "w") as writer:
+            logger.info("***** Test results *****")
+            for key, value in metrics.items():
+                logger.info("  %s = %s", key, value)
+                writer.write("%s = %s\n" % (key, value))
     return metrics
 
 
