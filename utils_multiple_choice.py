@@ -119,7 +119,6 @@ if is_torch_available():
                                                         name_gender_or_race=name_gender_or_race)
 
             logger.info("Training examples: %s", len(examples))
-            logger.info("article", str(examples[0].contexts[0]))
 
             self.features = convert_examples_to_features(examples, label_list, max_seq_length, tokenizer, )
 
