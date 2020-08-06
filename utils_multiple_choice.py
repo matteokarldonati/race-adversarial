@@ -311,6 +311,7 @@ class RaceProcessor(DataProcessor):
                             contexts=[article, article, article, article],
                             endings=[options[0], options[1], options[2], options[3]],
                             label=truth,
+                            run=None,
                         )
                     )
 
