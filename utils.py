@@ -16,6 +16,17 @@ FEMALE_NAMES = names.words('female.txt')
 NAMES = MALE_NAMES + FEMALE_NAMES
 
 
+def get_entities(text, entity_type):
+    doc = nlp(text)
+    entities = []
+    for x in doc.ents:
+        if x.label_ == entity_type:
+            entities.append(x.text)
+
+    entities = list(set(entities))
+    return entities
+
+
 def get_names(text):
     doc = nlp(text)
     names = []

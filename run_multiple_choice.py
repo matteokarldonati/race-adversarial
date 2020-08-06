@@ -95,6 +95,10 @@ class DataTrainingArguments:
     name_gender_or_race: str = field(
         default=None, metadata={"help": "choices=['male', 'female'], only if perturbation_type='names'"}
     )
+    entity_type: str = field(
+        default=None, metadata={"help": "choices=['ORG', 'GPE', 'LOC', 'NORP'], entity to perturb"}
+    )
+
 
 
 def main():
