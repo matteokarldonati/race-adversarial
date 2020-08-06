@@ -298,6 +298,13 @@ class RaceProcessor(DataProcessor):
             race_id = "%s-%s" % (set_type, data_raw["race_id"])
             article = data_raw["article"]
 
+            perturbated = False
+
+            if perturbation_type == 'names':
+                names = get_names_groups(article)
+                if names:
+                    perturbated = True
+
             if augment or (perturbation_num == 0):
                 for i in range(len(data_raw["answers"])):
                     truth = str(ord(data_raw["answers"][i]) - ord("A"))
@@ -311,16 +318,10 @@ class RaceProcessor(DataProcessor):
                             contexts=[article, article, article, article],
                             endings=[options[0], options[1], options[2], options[3]],
                             label=truth,
+                            perturbated=perturbated,
                             run=None,
                         )
                     )
-
-            perturbated = False
-
-            if perturbation_type == 'names':
-                names = get_names_groups(article)
-                if names:
-                    perturbated = True
 
             for n in range(perturbation_num):
                 if perturbation_type == 'names':
