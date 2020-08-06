@@ -53,6 +53,7 @@ class InputExample:
     endings: List[str]
     label: Optional[str]
     perturbated: Optional[bool]
+    run: Optional[int]
 
 
 @dataclass(frozen=True)
@@ -320,7 +321,7 @@ class RaceProcessor(DataProcessor):
                 if names:
                     perturbated = True
 
-            for _ in range(perturbation_num):
+            for n in range(perturbation_num):
                 if perturbation_type == 'names':
                     adv_names = get_adv_names(len(names), name_gender_or_race)
                     article = replace_names(article, names, adv_names)
@@ -346,7 +347,8 @@ class RaceProcessor(DataProcessor):
                             contexts=[article, article, article, article],
                             endings=[options[0], options[1], options[2], options[3]],
                             label=truth,
-                            perturbated=perturbated
+                            perturbated=perturbated,
+                            run=n,
                         )
                     )
         return examples
