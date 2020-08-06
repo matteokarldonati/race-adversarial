@@ -100,7 +100,6 @@ class DataTrainingArguments:
     )
 
 
-
 def main():
     parser = HfArgumentParser((ModelArguments, DataTrainingArguments, TrainingArguments))
     model_args, data_args, training_args = parser.parse_args_into_dataclasses()
@@ -217,10 +216,14 @@ def main():
     torch.save(label_ids, labels_ids_file)
 
     examples_ids = []
+    perturbated = []
     for input_feature in test_dataset.features:
         examples_ids.append(input_feature.example_id)
+        perturbated.append(input_feature.perturbated)
     examples_ids_file = os.path.join(training_args.output_dir, "examples_ids")
     torch.save(examples_ids, examples_ids_file)
+    perturbated_file = os.path.join(training_args.output_dir, "perturbated")
+    torch.save(perturbated, perturbated_file)
 
     output_eval_file = os.path.join(training_args.output_dir, "test_results.txt")
 
