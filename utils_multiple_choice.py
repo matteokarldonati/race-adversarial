@@ -123,6 +123,7 @@ if is_torch_available():
             logger.info("Training examples: %s", len(examples))
 
             self.features = convert_examples_to_features(examples, label_list, max_seq_length, tokenizer, )
+            self.examples = examples
 
         def __len__(self):
             return len(self.features)

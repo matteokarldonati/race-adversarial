@@ -218,10 +218,14 @@ def main():
     examples_ids = []
     perturbated = []
     run = []
+
     for input_feature in test_dataset.features:
         examples_ids.append(input_feature.example_id)
-        perturbated.append(input_feature.perturbated)
-        run.append(input_feature.run)
+
+    for examples in test_dataset.examples:
+        perturbated.append(examples.perturbated)
+        run.append(examples.run)
+
     examples_ids_file = os.path.join(training_args.output_dir, "examples_ids")
     torch.save(examples_ids, examples_ids_file)
     perturbated_file = os.path.join(training_args.output_dir, "perturbated")
