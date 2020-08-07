@@ -205,6 +205,7 @@ def main():
         mode=Split.test,
         perturbation_type=data_args.perturbation_type,
         perturbation_num=data_args.perturbation_num_test,
+        augment=data_args.augment,
         name_gender_or_race=data_args.name_gender_or_race,
     )
 
