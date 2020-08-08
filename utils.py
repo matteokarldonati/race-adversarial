@@ -1,9 +1,11 @@
+import os
+import pickle
 import random
+import sys
 
 import neuralcoref
 import nltk
 import spacy
-import torch
 from nltk.corpus import names
 
 nlp = spacy.load("en_core_web_sm")
@@ -16,7 +18,9 @@ FEMALE_NAMES = names.words('female.txt')
 
 NAMES = MALE_NAMES + FEMALE_NAMES
 
-NER_DICT = torch.load('ner_dict')
+ner_dict_path = os.path.join(sys.path[0], 'ner_dict.pkl')
+with open(ner_dict_path, 'rb') as f:
+    NER_DICT = pickle.load(f)
 
 
 def get_names(text):
