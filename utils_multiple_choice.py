@@ -307,7 +307,7 @@ class RaceProcessor(DataProcessor):
                     perturbated = True
 
             if perturbation_type in ['ORG', 'GPE', 'LOC', 'NORP']:
-                entities = get_entities(article)
+                entities = get_entities(article, perturbation_type)
                 if entities:
                     perturbated = True
 
