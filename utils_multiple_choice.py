@@ -28,7 +28,7 @@ from typing import List, Optional
 import tqdm
 from transformers import PreTrainedTokenizer, is_tf_available, is_torch_available
 
-from utils import get_adv_names, replace_names, get_names_groups
+from utils import get_names_groups, get_adv_names, replace_names, get_entities, get_adv_entities, replace_entities
 
 logger = logging.getLogger(__name__)
 
@@ -306,6 +306,11 @@ class RaceProcessor(DataProcessor):
                 if names:
                     perturbated = True
 
+            if perturbation_type in ['ORG', 'GPE', 'LOC', 'NORP']:
+                entities = get_entities(article)
+                if entities:
+                    perturbated = True
+
             if augment or (perturbation_num == 0):
                 for i in range(len(data_raw["answers"])):
                     truth = str(ord(data_raw["answers"][i]) - ord("A"))
@@ -328,6 +333,9 @@ class RaceProcessor(DataProcessor):
                 if perturbation_type == 'names':
                     adv_names = get_adv_names(len(names), name_gender_or_race)
                     article = replace_names(article, names, adv_names)
+                if perturbation_type in ['ORG', 'GPE', 'LOC', 'NORP']:
+                    adv_entities = get_adv_entities(len(entities), perturbation_type)
+                    article = replace_entities(article, entities, adv_entities)
 
                 for i in range(len(data_raw["answers"])):
                     truth = str(ord(data_raw["answers"][i]) - ord("A"))
@@ -335,6 +343,10 @@ class RaceProcessor(DataProcessor):
                     if perturbation_type == 'names':
                         question = replace_names(data_raw["questions"][i], names, adv_names)
                         options = [replace_names(option, names, adv_names) for option in data_raw["options"][i]]
+
+                    if perturbation_type in ['ORG', 'GPE', 'LOC', 'NORP']:
+                        question = replace_entities(data_raw["questions"][i], entities, adv_entities)
+                        options = [replace_entities(option, entities, adv_entities) for option in data_raw["options"][i]]
 
                     if perturbation_type == 'distractor':
                         distractor = random.choice(data_raw["options"][i])

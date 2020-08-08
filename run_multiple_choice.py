@@ -81,7 +81,7 @@ class DataTrainingArguments:
         default=False, metadata={"help": "Overwrite the cached training and evaluation sets"}
     )
     perturbation_type: str = field(
-        default=None, metadata={"help": "choices=['names', 'distractor']"}
+        default=None, metadata={"help": "choices=['names', 'distractor', 'ORG', 'GPE', 'LOC', 'NORP']"}
     )
     perturbation_num_train: int = field(
         default=0, metadata={"help": "How many perturbation to perform per example on the training set"}
@@ -94,9 +94,6 @@ class DataTrainingArguments:
     )
     name_gender_or_race: str = field(
         default=None, metadata={"help": "choices=['male', 'female'], only if perturbation_type='names'"}
-    )
-    entity_type: str = field(
-        default=None, metadata={"help": "choices=['ORG', 'GPE', 'LOC', 'NORP'], entity to perturb"}
     )
 
 
