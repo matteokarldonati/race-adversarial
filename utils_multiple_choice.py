@@ -28,7 +28,7 @@ from typing import List, Optional
 import tqdm
 from transformers import PreTrainedTokenizer, is_tf_available, is_torch_available
 
-from utils import get_names_groups, get_adv_names, replace_names, get_entities, get_adv_entities, replace_entities
+from perturbations import get_names_groups, get_adv_names, replace_names, get_entities, get_adv_entities, replace_entities
 
 logger = logging.getLogger(__name__)
 

@@ -33,7 +33,7 @@ from torch.utils.data import TensorDataset, DataLoader, RandomSampler, Sequentia
 from torch.utils.data.distributed import DistributedSampler
 from tqdm import tqdm, trange
 
-from ..utils import get_names_groups, get_adv_names, replace_names, get_entities, get_adv_entities, replace_entities
+from ..perturbations import get_names_groups, get_adv_names, replace_names, get_entities, get_adv_entities, replace_entities
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
                     datefmt='%m/%d/%Y %H:%M:%S',
@@ -398,13 +398,13 @@ def main():
                              "Positive power of 2: static loss scaling value.\n")
     parser.add_argument('--perturbation_type',
                         type=str, default=None,
-                        help="choices=['names', 'distractor']")
+                        help="choices=['names', 'distractor', 'ORG', 'GPE', 'LOC', 'NORP']")
     parser.add_argument('--perturbation_num',
                         type=int, default=0,
                         help="How many perturbation to perform per example on the training set")
     parser.add_argument('--augment',
                         default=False,
-                        help="Perform data augmentation on the training set")
+                        help="Include original data (non-perturbated instances) in the features")
     parser.add_argument('--name_gender_or_race',
                         type=str, default=None,
                         help="choices=['male', 'female'], only if perturbation_type='names'")

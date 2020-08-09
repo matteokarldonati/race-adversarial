@@ -5,7 +5,7 @@
 
 #$ -l tmem=16G
 #$ -l h_rt=50:00:00
-#$ -l gpu=true,gpu_p100=yes
+#$ -l gpu=true
 
 #$ -cwd
 

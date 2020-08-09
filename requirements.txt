@@ -1,12 +1,14 @@
 torch==1.4.0
-numpy
+numpy==1.18.5
+pandas==1.0.5
 
-transformers
+transformers==3.0.2
 
-spacy
-nltk
+nltk==3.2.5
+spacy==2.1
+neuralcoref==4.0 --no-binary neuralcoref
 
-tqdm
-requests
-boto3
+tqdm==4.41.1
+requests==2.23.0
+boto3==1.14.33
 

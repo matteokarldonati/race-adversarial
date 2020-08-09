@@ -90,7 +90,7 @@ class DataTrainingArguments:
         default=0, metadata={"help": "How many perturbation to perform per example on the test set"}
     )
     augment: bool = field(
-        default=False, metadata={"help": "Perform data augmentation on the training set"}
+        default=False, metadata={"help": "Include original data (non-perturbated instances) in the features"}
     )
     name_gender_or_race: str = field(
         default=None, metadata={"help": "choices=['male', 'female'], only if perturbation_type='names'"}
