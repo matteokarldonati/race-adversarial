@@ -4,7 +4,7 @@ pandas==1.0.5
 
 transformers==3.0.2
 
-nltk==3.2.5
+nltk==3.4.5
 spacy==2.1
 neuralcoref==4.0 --no-binary neuralcoref
 
