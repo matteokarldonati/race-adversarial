@@ -1,6 +1,6 @@
 #$ -S /bin/bash
 
-#$ -N Training
+#$ -N ALBERT_NER
 #$ -j y
 
 #$ -l tmem=16G

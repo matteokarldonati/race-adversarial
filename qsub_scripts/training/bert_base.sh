@@ -1,6 +1,6 @@
 #$ -S /bin/bash
 
-#$ -N Training
+#$ -N BERT_NER
 #$ -j y
 
 #$ -l tmem=16G
