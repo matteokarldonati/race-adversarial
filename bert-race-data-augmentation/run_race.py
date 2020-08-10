@@ -407,6 +407,7 @@ def main():
                         help="How many perturbation to perform per example on the training set")
     parser.add_argument('--augment',
                         default=False,
+                        action='store_true',
                         help="Include original data (non-perturbated instances) in the features")
     parser.add_argument('--name_gender_or_race',
                         type=str, default=None,
