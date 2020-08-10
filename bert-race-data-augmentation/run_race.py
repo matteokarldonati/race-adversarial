@@ -33,7 +33,10 @@ from torch.utils.data import TensorDataset, DataLoader, RandomSampler, Sequentia
 from torch.utils.data.distributed import DistributedSampler
 from tqdm import tqdm, trange
 
-from ..perturbations import get_names_groups, get_adv_names, replace_names, get_entities, get_adv_entities, replace_entities
+import sys
+sys.path.append('path')
+
+from perturbations import get_names_groups, get_adv_names, replace_names, get_entities, get_adv_entities, replace_entities
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
                     datefmt='%m/%d/%Y %H:%M:%S',
