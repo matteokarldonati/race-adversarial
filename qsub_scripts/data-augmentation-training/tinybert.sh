@@ -4,13 +4,18 @@
 #$ -j y
 
 #$ -l tmem=16G
-#$ -l h_rt=24:00:00
+#$ -l h_rt=4:00:00
 #$ -l gpu=true
 
 #$ -cwd
 
+export PATH=/share/apps/python-3.7.2-shared/bin:${PATH}
+export LD_LIBRARY_PATH=/share/apps/python-3.7.2-shared/lib:${LD_LIBRARY_PATH}
+
+source /share/apps/examples/source_files/cuda/cuda-10.1.source
+
 export RACE_DIR=../../../RACE
-python3 run_multiple_choice.py \
+python3 ../../run_multiple_choice.py \
 --task_name race \
 --model_name_or_path ../../../models/tinybert \
 --data_dir $RACE_DIR \

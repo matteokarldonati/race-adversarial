@@ -18,7 +18,7 @@ export RACE_DIR=../../RACE
 
 # BERT_base
 
-python3 run_multiple_choice.py \
+python3 ../run_multiple_choice.py \
 --task_name race \
 --model_name_or_path ../../models/bert-race-baseline \
 --data_dir $RACE_DIR \
@@ -29,7 +29,7 @@ python3 run_multiple_choice.py \
 --perturbation_num_test 25 \
 --augment \
 
-python3 run_multiple_choice.py \
+python3 ../run_multiple_choice.py \
 --task_name race \
 --model_name_or_path ../../models/bert-race-baseline \
 --data_dir $RACE_DIR \
@@ -40,7 +40,7 @@ python3 run_multiple_choice.py \
 --perturbation_num_test 25 \
 --augment \
 
-python3 run_multiple_choice.py \
+python3 ../run_multiple_choice.py \
 --task_name race \
 --model_name_or_path ../../models/bert-race-baseline \
 --data_dir $RACE_DIR \
@@ -51,7 +51,7 @@ python3 run_multiple_choice.py \
 --perturbation_num_test 25 \
 --augment \
 
-python3 run_multiple_choice.py \
+python3 ../run_multiple_choice.py \
 --task_name race \
 --model_name_or_path ../../models/bert-race-baseline \
 --data_dir $RACE_DIR \
@@ -62,7 +62,7 @@ python3 run_multiple_choice.py \
 --perturbation_num_test 25 \
 --augment \
 
-python3 run_multiple_choice.py \
+python3 ../run_multiple_choice.py \
 --task_name race \
 --model_name_or_path ../../models/bert-race-baseline \
 --data_dir $RACE_DIR \
@@ -75,7 +75,7 @@ python3 run_multiple_choice.py \
 
 # ALBERT_base
 
-python3 run_multiple_choice.py \
+python3 ../run_multiple_choice.py \
 --task_name race \
 --model_name_or_path ../../models/albert_base_v2-race \
 --data_dir $RACE_DIR \
@@ -86,7 +86,7 @@ python3 run_multiple_choice.py \
 --perturbation_num_test 25 \
 --augment \
 
-python3 run_multiple_choice.py \
+python3 ../run_multiple_choice.py \
 --task_name race \
 --model_name_or_path ../../models/albert_base_v2-race \
 --data_dir $RACE_DIR \
@@ -97,7 +97,7 @@ python3 run_multiple_choice.py \
 --perturbation_num_test 25 \
 --augment \
 
-python3 run_multiple_choice.py \
+python3 ../run_multiple_choice.py \
 --task_name race \
 --model_name_or_path ../../models/albert_base_v2-race \
 --data_dir $RACE_DIR \
@@ -108,7 +108,7 @@ python3 run_multiple_choice.py \
 --perturbation_num_test 25 \
 --augment \
 
-python3 run_multiple_choice.py \
+python3 ../run_multiple_choice.py \
 --task_name race \
 --model_name_or_path ../../models/albert_base_v2-race \
 --data_dir $RACE_DIR \
@@ -119,7 +119,7 @@ python3 run_multiple_choice.py \
 --perturbation_num_test 25 \
 --augment \
 
-python3 run_multiple_choice.py \
+python3 ../run_multiple_choice.py \
 --task_name race \
 --model_name_or_path ../../models/albert_base_v2-race \
 --data_dir $RACE_DIR \
@@ -132,7 +132,7 @@ python3 run_multiple_choice.py \
 
 # RoBERTa_base
 
-python3 run_multiple_choice.py \
+python3 ../run_multiple_choice.py \
 --task_name race \
 --model_name_or_path ../../models/roberta_base-race \
 --data_dir $RACE_DIR \
@@ -143,7 +143,7 @@ python3 run_multiple_choice.py \
 --perturbation_num_test 25 \
 --augment \
 
-python3 run_multiple_choice.py \
+python3 ../run_multiple_choice.py \
 --task_name race \
 --model_name_or_path ../../models/roberta_base-race \
 --data_dir $RACE_DIR \
@@ -154,7 +154,7 @@ python3 run_multiple_choice.py \
 --perturbation_num_test 25 \
 --augment \
 
-python3 run_multiple_choice.py \
+python3 ../run_multiple_choice.py \
 --task_name race \
 --model_name_or_path ../../models/roberta_base-race \
 --data_dir $RACE_DIR \
@@ -165,7 +165,7 @@ python3 run_multiple_choice.py \
 --perturbation_num_test 25 \
 --augment \
 
-python3 run_multiple_choice.py \
+python3 ../run_multiple_choice.py \
 --task_name race \
 --model_name_or_path ../../models/roberta_base-race \
 --data_dir $RACE_DIR \
@@ -176,7 +176,7 @@ python3 run_multiple_choice.py \
 --perturbation_num_test 25 \
 --augment \
 
-python3 run_multiple_choice.py \
+python3 ../run_multiple_choice.py \
 --task_name race \
 --model_name_or_path ../../models/roberta_base-race \
 --data_dir $RACE_DIR \
@@ -189,7 +189,7 @@ python3 run_multiple_choice.py \
 
 # TinyBERT
 
-python3 run_multiple_choice.py \
+python3 ../run_multiple_choice.py \
 --task_name race \
 --model_name_or_path ../../models/tinybert \
 --data_dir $RACE_DIR \
@@ -200,7 +200,7 @@ python3 run_multiple_choice.py \
 --perturbation_num_test 25 \
 --augment \
 
-python3 run_multiple_choice.py \
+python3 ../run_multiple_choice.py \
 --task_name race \
 --model_name_or_path ../../models/tinybert \
 --data_dir $RACE_DIR \
@@ -211,7 +211,7 @@ python3 run_multiple_choice.py \
 --perturbation_num_test 25 \
 --augment \
 
-python3 run_multiple_choice.py \
+python3 ../run_multiple_choice.py \
 --task_name race \
 --model_name_or_path ../../models/tinybert \
 --data_dir $RACE_DIR \
@@ -222,7 +222,7 @@ python3 run_multiple_choice.py \
 --perturbation_num_test 25 \
 --augment \
 
-python3 run_multiple_choice.py \
+python3 ../run_multiple_choice.py \
 --task_name race \
 --model_name_or_path ../../models/tinybert \
 --data_dir $RACE_DIR \
@@ -233,7 +233,7 @@ python3 run_multiple_choice.py \
 --perturbation_num_test 25 \
 --augment \
 
-python3 run_multiple_choice.py \
+python3 ../run_multiple_choice.py \
 --task_name race \
 --model_name_or_path ../../models/tinybert \
 --data_dir $RACE_DIR \
