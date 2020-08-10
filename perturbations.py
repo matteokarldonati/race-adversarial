@@ -18,7 +18,8 @@ FEMALE_NAMES = names.words('female.txt')
 
 NAMES = MALE_NAMES + FEMALE_NAMES
 
-ner_dict_path = os.path.join(sys.path[0], 'ner_dict.pkl')
+path = [path for path in sys.path if path.endswith('race-adversarial')][0]
+ner_dict_path = os.path.join(path, 'data_perturbations/ner_dict.pkl')
 with open(ner_dict_path, 'rb') as f:
     NER_DICT = pickle.load(f)
 

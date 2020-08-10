@@ -21,6 +21,7 @@ import json
 import logging
 import os
 import random
+import sys
 
 import numpy as np
 import torch
@@ -33,10 +34,11 @@ from torch.utils.data import TensorDataset, DataLoader, RandomSampler, Sequentia
 from torch.utils.data.distributed import DistributedSampler
 from tqdm import tqdm, trange
 
-import sys
-sys.path.append('path')
+path = '/'.join([path for path in sys.path if path.endswith('bert-race-data-augmentation')][0].split('/')[:-1])
+sys.path.append(path)
 
-from perturbations import get_names_groups, get_adv_names, replace_names, get_entities, get_adv_entities, replace_entities
+from perturbations import get_names_groups, get_adv_names, replace_names, get_entities, get_adv_entities, \
+    replace_entities
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
                     datefmt='%m/%d/%Y %H:%M:%S',
