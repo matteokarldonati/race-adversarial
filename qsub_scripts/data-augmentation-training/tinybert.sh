@@ -4,7 +4,7 @@
 #$ -j y
 
 #$ -l tmem=16G
-#$ -l h_rt=4:00:00
+#$ -l h_rt=24:00:00
 #$ -l gpu=true
 
 #$ -cwd
