@@ -144,7 +144,7 @@ def read_race_examples(paths, perturbation_type,
 
                 if augment or (perturbation_num == 0):
                     for i in range(len(data_raw["answers"])):
-                        truth = str(ord(data_raw["answers"][i]) - ord("A"))
+                        truth = ord(data_raw['answers'][i]) - ord('A')
                         question = data_raw["questions"][i]
                         options = data_raw["options"][i]
 
@@ -170,7 +170,7 @@ def read_race_examples(paths, perturbation_type,
                         article = replace_entities(article, entities, adv_entities)
 
                     for i in range(len(data_raw["answers"])):
-                        truth = str(ord(data_raw["answers"][i]) - ord("A"))
+                        truth = ord(data_raw['answers'][i]) - ord('A')
 
                         if perturbation_type == 'names':
                             question = replace_names(data_raw["questions"][i], names, adv_names)
