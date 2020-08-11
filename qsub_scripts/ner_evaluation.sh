@@ -138,7 +138,7 @@ python3 ../run_multiple_choice.py \
 --data_dir $RACE_DIR \
 --max_seq_length 512 \
 --per_gpu_eval_batch_size=4 \
---output_dir ../output/albert_base_output_names \
+--output_dir ../output/roberta_base_output_names \
 --perturbation_type 'names' \
 --perturbation_num_test 25 \
 --augment \
@@ -149,7 +149,7 @@ python3 ../run_multiple_choice.py \
 --data_dir $RACE_DIR \
 --max_seq_length 512 \
 --per_gpu_eval_batch_size=4 \
---output_dir ../output/albert_base_output_org \
+--output_dir ../output/roberta_base_output_org \
 --perturbation_type 'ORG' \
 --perturbation_num_test 25 \
 --augment \
@@ -160,7 +160,7 @@ python3 ../run_multiple_choice.py \
 --data_dir $RACE_DIR \
 --max_seq_length 512 \
 --per_gpu_eval_batch_size=4 \
---output_dir ../output/albert_base_output_gpe \
+--output_dir ../output/roberta_base_output_gpe \
 --perturbation_type 'GPE' \
 --perturbation_num_test 25 \
 --augment \
@@ -171,7 +171,7 @@ python3 ../run_multiple_choice.py \
 --data_dir $RACE_DIR \
 --max_seq_length 512 \
 --per_gpu_eval_batch_size=4 \
---output_dir ../output/albert_base_output_loc \
+--output_dir ../output/roberta_base_output_loc \
 --perturbation_type 'LOC' \
 --perturbation_num_test 25 \
 --augment \
@@ -182,7 +182,7 @@ python3 ../run_multiple_choice.py \
 --data_dir $RACE_DIR \
 --max_seq_length 512 \
 --per_gpu_eval_batch_size=4 \
---output_dir ../output/albert_base_output_norp \
+--output_dir ../output/roberta_base_output_norp \
 --perturbation_type 'NORP' \
 --perturbation_num_test 25 \
 --augment \
@@ -195,7 +195,7 @@ python3 ../run_multiple_choice.py \
 --data_dir $RACE_DIR \
 --max_seq_length 380 \
 --per_gpu_eval_batch_size=4 \
---output_dir ../output/bert_base_output_names \
+--output_dir ../output/tinybert_base_output_names \
 --perturbation_type 'names' \
 --perturbation_num_test 25 \
 --augment \
@@ -206,7 +206,7 @@ python3 ../run_multiple_choice.py \
 --data_dir $RACE_DIR \
 --max_seq_length 380 \
 --per_gpu_eval_batch_size=4 \
---output_dir ../output/bert_base_output_org \
+--output_dir ../output/tinybert_base_output_org \
 --perturbation_type 'ORG' \
 --perturbation_num_test 25 \
 --augment \
@@ -217,7 +217,7 @@ python3 ../run_multiple_choice.py \
 --data_dir $RACE_DIR \
 --max_seq_length 380 \
 --per_gpu_eval_batch_size=4 \
---output_dir ../output/bert_base_output_gpe \
+--output_dir ../output/tinybert_base_output_gpe \
 --perturbation_type 'GPE' \
 --perturbation_num_test 25 \
 --augment \
@@ -228,7 +228,7 @@ python3 ../run_multiple_choice.py \
 --data_dir $RACE_DIR \
 --max_seq_length 380 \
 --per_gpu_eval_batch_size=4 \
---output_dir ../output/bert_base_output_loc \
+--output_dir ../output/tinybert_base_output_loc \
 --perturbation_type 'LOC' \
 --perturbation_num_test 25 \
 --augment \
@@ -239,7 +239,7 @@ python3 ../run_multiple_choice.py \
 --data_dir $RACE_DIR \
 --max_seq_length 380 \
 --per_gpu_eval_batch_size=4 \
---output_dir ../output/bert_base_output_norp \
+--output_dir ../output/tinybert_base_output_norp \
 --perturbation_type 'NORP' \
 --perturbation_num_test 25 \
 --augment \
