@@ -1,6 +1,6 @@
 #$ -S /bin/bash
 
-#$ -N TINYBERT_NER
+#$ -N TINYBERT_GPE
 #$ -j y
 
 #$ -l tmem=16G
@@ -22,11 +22,11 @@ python3 ../../run_multiple_choice.py \
 --max_seq_length 380 \
 --per_gpu_eval_batch_size=4 \
 --per_gpu_train_batch_size=4 \
---output_dir ../../output/tinybert-names \
+--output_dir ../../output/tinybert-gpe \
 --do_train \
 --learning_rate 1e-5 \
 --num_train_epochs 1 \
 --gradient_accumulation_steps 2 \
---perturbation_type 'names' \
+--perturbation_type 'GPE' \
 --perturbation_num_train 3 \
 --overwrite_output_dir \

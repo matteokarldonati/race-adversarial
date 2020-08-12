@@ -1,6 +1,6 @@
 #$ -S /bin/bash
 
-#$ -N BERT_NER
+#$ -N BERT_BASE_ORG
 #$ -j y
 
 #$ -l tmem=16G
