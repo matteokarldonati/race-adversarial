@@ -108,7 +108,10 @@ if is_torch_available():
             label_list = processor.get_labels()
 
             if mode == Split.dev:
-                examples = processor.get_dev_examples(data_dir)
+                examples = processor.get_dev_examples(data_dir, perturbation_type=perturbation_type,
+                                                       perturbation_num=perturbation_num,
+                                                       augment=augment,
+                                                       name_gender_or_race=name_gender_or_race)
             elif mode == Split.test:
                 examples = processor.get_test_examples(data_dir, perturbation_type=perturbation_type,
                                                        perturbation_num=perturbation_num,
@@ -251,14 +254,20 @@ class RaceProcessor(DataProcessor):
                                      augment,
                                      name_gender_or_race)
 
-    def get_dev_examples(self, data_dir, name_gender_or_race):
+    def get_dev_examples(self, data_dir, perturbation_type,
+                          perturbation_num,
+                          augment,
+                          name_gender_or_race):
         """See base class."""
         logger.info("LOOKING AT {} dev".format(data_dir))
         high = os.path.join(data_dir, "dev/high")
         middle = os.path.join(data_dir, "dev/middle")
         high = self._read_txt(high)
         middle = self._read_txt(middle)
-        return self._create_examples(high + middle, "dev", name_gender_or_race)
+        return self._create_examples(high + middle, "dev", perturbation_type,
+                                     perturbation_num,
+                                     augment,
+                                     name_gender_or_race)
 
     def get_test_examples(self, data_dir, perturbation_type,
                           perturbation_num,

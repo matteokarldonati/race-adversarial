@@ -178,7 +178,7 @@ def main():
             task=data_args.task_name,
             max_seq_length=data_args.max_seq_length,
             overwrite_cache=data_args.overwrite_cache,
-            mode=Split.test,
+            mode=Split.dev,
         )
         if training_args.do_train
         else None
