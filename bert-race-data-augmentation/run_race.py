@@ -526,7 +526,7 @@ def main():
     if args.do_train:
         cached_features_file_train = os.path.join(
             args.data_dir,
-            "cached_train_BertTokenizer_{}_{}_bert-race".format(str(args.max_seq_length), 'race', ),
+            "cached_train_BertTokenizer_{}_{}_bert-race".format(str(args.max_seq_length), args.perturbation_type, ),
         )
 
         if os.path.exists(cached_features_file_train):
