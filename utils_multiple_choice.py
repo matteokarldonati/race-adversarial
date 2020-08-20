@@ -28,7 +28,8 @@ from typing import List, Optional
 import tqdm
 from transformers import PreTrainedTokenizer, is_tf_available, is_torch_available
 
-from perturbations import get_names_groups, get_adv_names, replace_names, get_entities, get_adv_entities, replace_entities
+from perturbations import get_names_groups, get_adv_names, replace_names, get_entities, get_adv_entities, \
+    replace_entities
 
 logger = logging.getLogger(__name__)
 
@@ -109,9 +110,9 @@ if is_torch_available():
 
             if mode == Split.dev:
                 examples = processor.get_dev_examples(data_dir, perturbation_type=perturbation_type,
-                                                       perturbation_num=perturbation_num,
-                                                       augment=augment,
-                                                       name_gender_or_race=name_gender_or_race)
+                                                      perturbation_num=perturbation_num,
+                                                      augment=augment,
+                                                      name_gender_or_race=name_gender_or_race)
             elif mode == Split.test:
                 examples = processor.get_test_examples(data_dir, perturbation_type=perturbation_type,
                                                        perturbation_num=perturbation_num,
@@ -255,9 +256,9 @@ class RaceProcessor(DataProcessor):
                                      name_gender_or_race)
 
     def get_dev_examples(self, data_dir, perturbation_type,
-                          perturbation_num,
-                          augment,
-                          name_gender_or_race):
+                         perturbation_num,
+                         augment,
+                         name_gender_or_race):
         """See base class."""
         logger.info("LOOKING AT {} dev".format(data_dir))
         high = os.path.join(data_dir, "dev/high")
@@ -355,7 +356,8 @@ class RaceProcessor(DataProcessor):
 
                     if perturbation_type in ['ORG', 'GPE', 'LOC', 'NORP']:
                         question = replace_entities(data_raw["questions"][i], entities, adv_entities)
-                        options = [replace_entities(option, entities, adv_entities) for option in data_raw["options"][i]]
+                        options = [replace_entities(option, entities, adv_entities) for option in
+                                   data_raw["options"][i]]
 
                     if perturbation_type == 'distractor':
                         distractor = random.choice(data_raw["options"][i])

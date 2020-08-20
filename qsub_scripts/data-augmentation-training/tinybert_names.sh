@@ -30,3 +30,4 @@ python3 ../../run_multiple_choice.py \
 --perturbation_type 'names' \
 --perturbation_num_train 3 \
 --overwrite_output_dir \
+--save_total_limit 1 \
