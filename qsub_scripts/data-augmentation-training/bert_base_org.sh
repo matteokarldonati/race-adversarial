@@ -31,4 +31,3 @@ python3 ../../bert-race-data-augmentation/run_race.py \
 --perturbation_type='ORG' \
 --perturbation_num=2 \
 --augment \
---save_total_limit 1 \
