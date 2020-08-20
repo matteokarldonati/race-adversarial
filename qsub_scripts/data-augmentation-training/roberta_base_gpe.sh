@@ -21,12 +21,12 @@ python3 ../../run_multiple_choice.py \
 --data_dir $RACE_DIR \
 --max_seq_length 512 \
 --per_gpu_eval_batch_size=4 \
---per_gpu_train_batch_size=4 \
+--per_gpu_train_batch_size=2 \
 --output_dir ../../output/roberta_base-gpe \
 --do_train \
 --learning_rate 1e-5 \
 --num_train_epochs 2 \
---gradient_accumulation_steps 4 \
+--gradient_accumulation_steps 8 \
 --perturbation_type 'GPE' \
 --perturbation_num_train 2 \
 --augment \
