@@ -27,7 +27,7 @@ python3 ../../bert-race-data-augmentation/run_race.py \
 --eval_batch_size=4 \
 --learning_rate=5e-5 \
 --num_train_epochs=2 \
---gradient_accumulation_steps=8 \
+--gradient_accumulation_steps=16 \
 --perturbation_type='NORP' \
 --perturbation_num=2 \
 --augment \
