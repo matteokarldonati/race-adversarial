@@ -25,7 +25,7 @@ import sys
 
 import numpy as np
 import torch
-import wandb
+#import wandb
 from pytorch_pretrained_bert.file_utils import PYTORCH_PRETRAINED_BERT_CACHE
 from pytorch_pretrained_bert.modeling import BertForMultipleChoice
 from pytorch_pretrained_bert.optimization import BertAdam
