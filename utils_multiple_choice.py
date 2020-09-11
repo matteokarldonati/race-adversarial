@@ -311,72 +311,142 @@ class RaceProcessor(DataProcessor):
 
             perturbated = False
 
-            if perturbation_type == 'names':
-                names = get_names_groups(article)
-                if names:
-                    perturbated = True
+            if perturbation_type == 'ALL':
+                for perturbation_type_ in ['names', 'ORG', 'GPE', 'LOC', 'NORP']:
 
-            if perturbation_type in ['ORG', 'GPE', 'LOC', 'NORP']:
-                entities = get_entities(article, perturbation_type)
-                if entities:
-                    perturbated = True
+                    if perturbation_type_ == 'names':
+                        names = get_names_groups(article)
+                        if names:
+                            perturbated = True
 
-            if augment or (perturbation_num == 0):
-                for i in range(len(data_raw["answers"])):
-                    truth = str(ord(data_raw["answers"][i]) - ord("A"))
-                    question = data_raw["questions"][i]
-                    options = data_raw["options"][i]
+                    if perturbation_type_ in ['ORG', 'GPE', 'LOC', 'NORP']:
+                        entities = get_entities(article, perturbation_type)
+                        if entities:
+                            perturbated = True
 
-                    examples.append(
-                        InputExample(
-                            example_id=race_id,
-                            question=question,
-                            contexts=[article, article, article, article],
-                            endings=[options[0], options[1], options[2], options[3]],
-                            label=truth,
-                            perturbated=perturbated,
-                            run=None,
-                        )
-                    )
+                    if augment or (perturbation_num == 0):
+                        for i in range(len(data_raw["answers"])):
+                            truth = str(ord(data_raw["answers"][i]) - ord("A"))
+                            question = data_raw["questions"][i]
+                            options = data_raw["options"][i]
 
-            for n in range(perturbation_num):
+                            examples.append(
+                                InputExample(
+                                    example_id=race_id,
+                                    question=question,
+                                    contexts=[article, article, article, article],
+                                    endings=[options[0], options[1], options[2], options[3]],
+                                    label=truth,
+                                    perturbated=perturbated,
+                                    run=None,
+                                )
+                            )
+
+                    for n in range(perturbation_num):
+                        if perturbation_type_ == 'names':
+                            adv_names = get_adv_names(len(names), name_gender_or_race)
+                            article = replace_names(article, names, adv_names)
+                        if perturbation_type_ in ['ORG', 'GPE', 'LOC', 'NORP']:
+                            adv_entities = get_adv_entities(len(entities), perturbation_type_)
+                            article = replace_entities(article, entities, adv_entities)
+
+                        for i in range(len(data_raw["answers"])):
+                            truth = str(ord(data_raw["answers"][i]) - ord("A"))
+
+                            if perturbation_type_ == 'names':
+                                question = replace_names(data_raw["questions"][i], names, adv_names)
+                                options = [replace_names(option, names, adv_names) for option in data_raw["options"][i]]
+
+                            if perturbation_type_ in ['ORG', 'GPE', 'LOC', 'NORP']:
+                                question = replace_entities(data_raw["questions"][i], entities, adv_entities)
+                                options = [replace_entities(option, entities, adv_entities) for option in
+                                           data_raw["options"][i]]
+
+                            if perturbation_type == 'distractor':
+                                distractor = random.choice(data_raw["options"][i])
+                                article = f"The distractor is '{distractor}'. " + data_raw["article"]
+
+                                question = data_raw["questions"][i]
+                                options = data_raw["options"][i]
+
+                            examples.append(
+                                InputExample(
+                                    example_id=race_id,
+                                    question=question,
+                                    contexts=[article, article, article, article],
+                                    endings=[options[0], options[1], options[2], options[3]],
+                                    label=truth,
+                                    perturbated=perturbated,
+                                    run=n,
+                                )
+                            )
+            else:
                 if perturbation_type == 'names':
-                    adv_names = get_adv_names(len(names), name_gender_or_race)
-                    article = replace_names(article, names, adv_names)
+                    names = get_names_groups(article)
+                    if names:
+                        perturbated = True
+
                 if perturbation_type in ['ORG', 'GPE', 'LOC', 'NORP']:
-                    adv_entities = get_adv_entities(len(entities), perturbation_type)
-                    article = replace_entities(article, entities, adv_entities)
+                    entities = get_entities(article, perturbation_type)
+                    if entities:
+                        perturbated = True
 
-                for i in range(len(data_raw["answers"])):
-                    truth = str(ord(data_raw["answers"][i]) - ord("A"))
-
-                    if perturbation_type == 'names':
-                        question = replace_names(data_raw["questions"][i], names, adv_names)
-                        options = [replace_names(option, names, adv_names) for option in data_raw["options"][i]]
-
-                    if perturbation_type in ['ORG', 'GPE', 'LOC', 'NORP']:
-                        question = replace_entities(data_raw["questions"][i], entities, adv_entities)
-                        options = [replace_entities(option, entities, adv_entities) for option in
-                                   data_raw["options"][i]]
-
-                    if perturbation_type == 'distractor':
-                        distractor = random.choice(data_raw["options"][i])
-                        article = f"The distractor is '{distractor}'. " + data_raw["article"]
-
+                if augment or (perturbation_num == 0):
+                    for i in range(len(data_raw["answers"])):
+                        truth = str(ord(data_raw["answers"][i]) - ord("A"))
                         question = data_raw["questions"][i]
                         options = data_raw["options"][i]
 
-                    examples.append(
-                        InputExample(
-                            example_id=race_id,
-                            question=question,
-                            contexts=[article, article, article, article],
-                            endings=[options[0], options[1], options[2], options[3]],
-                            label=truth,
-                            perturbated=perturbated,
-                            run=n,
+                        examples.append(
+                            InputExample(
+                                example_id=race_id,
+                                question=question,
+                                contexts=[article, article, article, article],
+                                endings=[options[0], options[1], options[2], options[3]],
+                                label=truth,
+                                perturbated=perturbated,
+                                run=None,
+                            )
                         )
-                    )
+
+                for n in range(perturbation_num):
+                    if perturbation_type == 'names':
+                        adv_names = get_adv_names(len(names), name_gender_or_race)
+                        article = replace_names(article, names, adv_names)
+                    if perturbation_type in ['ORG', 'GPE', 'LOC', 'NORP']:
+                        adv_entities = get_adv_entities(len(entities), perturbation_type)
+                        article = replace_entities(article, entities, adv_entities)
+
+                    for i in range(len(data_raw["answers"])):
+                        truth = str(ord(data_raw["answers"][i]) - ord("A"))
+
+                        if perturbation_type == 'names':
+                            question = replace_names(data_raw["questions"][i], names, adv_names)
+                            options = [replace_names(option, names, adv_names) for option in data_raw["options"][i]]
+
+                        if perturbation_type in ['ORG', 'GPE', 'LOC', 'NORP']:
+                            question = replace_entities(data_raw["questions"][i], entities, adv_entities)
+                            options = [replace_entities(option, entities, adv_entities) for option in
+                                       data_raw["options"][i]]
+
+                        if perturbation_type == 'distractor':
+                            distractor = random.choice(data_raw["options"][i])
+                            article = f"The distractor is '{distractor}'. " + data_raw["article"]
+
+                            question = data_raw["questions"][i]
+                            options = data_raw["options"][i]
+
+                        examples.append(
+                            InputExample(
+                                example_id=race_id,
+                                question=question,
+                                contexts=[article, article, article, article],
+                                endings=[options[0], options[1], options[2], options[3]],
+                                label=truth,
+                                perturbated=perturbated,
+                                run=n,
+                            )
+                        )
         return examples
 
 
